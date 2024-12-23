@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'game_screen.dart';
 
 class MenuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context)!;
-
     return Scaffold(
       backgroundColor: Colors.black,
       body: Center(
@@ -14,7 +11,7 @@ class MenuScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              localizations.appTitle,
+              'Snake Game',
               style: TextStyle(color: Colors.green, fontSize: 32),
             ),
             SizedBox(height: 20),
@@ -25,7 +22,7 @@ class MenuScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => GameScreen()),
                 );
               },
-              child: Text(localizations.startGame),
+              child: Text('Start Game'),
             ),
             SizedBox(height: 10),
             ElevatedButton(
@@ -33,8 +30,11 @@ class MenuScreen extends StatelessWidget {
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: Text(localizations.instructions),
-                    content: Text(localizations.instructionText),
+                    title: Text('Instructions'),
+                    content: Text(
+                      'Swipe to control the snake. Eat food to score points. '
+                      'Avoid hitting yourself or the walls!',
+                    ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context),
@@ -44,7 +44,7 @@ class MenuScreen extends StatelessWidget {
                   ),
                 );
               },
-              child: Text(localizations.instructions),
+              child: Text('Instructions'),
             ),
           ],
         ),

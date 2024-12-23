@@ -1,0 +1,15 @@
+{
+    "appTitle": "Juego de Serpiente",
+    "startGame": "Iniciar Juego",
+    "highScores": "Puntuaciones Altas",
+    "settings": "Ajustes",
+    "instructions": "Instrucciones",
+    "instructionText": "Desliza o toca para controlar la serpiente. Recoge la comida para crecer. ¡Evita golpear las paredes y a ti mismo!",
+    "gameOver": "¡Juego Terminado!",
+    "score": "Puntuación: {score}",
+    "highScore": "Mejor Puntuación: {score}",
+    "playAgain": "Jugar de Nuevo",
+    "mainMenu": "Menú Principal",
+    "darkMode": "Modo Oscuro",
+    "soundEffects": "Efectos de Sonido"
+  }

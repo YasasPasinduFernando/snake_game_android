@@ -1,0 +1,17 @@
+{
+  "appTitle": "Snake Game",
+  "startGame": "Start Game",
+  "highScores": "High Scores",
+  "settings": "Settings",
+  "instructions": "Instructions",
+  "instructionText": "Swipe or tap to control the snake. Collect food to grow longer. Avoid hitting walls and yourself!",
+  "gameOver": "Game Over!",
+  "score": "Score: {score}",
+  "highScore": "High Score: {score}",
+  "playAgain": "Play Again",
+  "mainMenu": "Main Menu",
+  "darkMode": "Dark Mode",
+  "soundEffects": "Sound Effects"
+}
+
+
