@@ -1,0 +1,12 @@
+{
+  "appTitle": "Snake Game",
+  "startGame": "Start Game",
+  "instructions": "Instructions",
+  "instructionText": "Swipe to control the snake. Eat food to score points. Avoid hitting yourself or the walls!",
+  "playAgain": "Play Again",
+  "scoreText": "Score: {score}",
+  "highScoreText": "High Score: {highScore}",
+  "@appTitle": {
+    "description": "Title of the app"
+  }
+}
