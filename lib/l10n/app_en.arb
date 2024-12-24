@@ -1,7 +1,8 @@
 {
   "gameTitle": "Snake Game",
   "startGame": "Start Game",
-  "highScores": "High Scores",
+  "playButton": "Play",
+  "highScoresButton": "High Scores",
   "instructions": "Instructions",
   "score": "Score: {score}",
   "@score": {

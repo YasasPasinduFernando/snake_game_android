@@ -1,7 +1,7 @@
 {
   "gameTitle": "பாம்பு விளையாட்டு",
-  "startGame": "விளையாட்டைத் தொடங்கு",
-  "highScores": "உயர் மதிப்பெண்கள்",
+  "playButton": "போடு",
+  "highScoresButton": "உயர் மதிப்பெண்கள்",
   "instructions": "வழிமுறைகள்",
   "score": "மதிப்பெண்: {score}",
   "@score": {

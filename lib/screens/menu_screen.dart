@@ -5,7 +5,7 @@ import 'high_scores_screen.dart';
 
 class MenuScreen extends StatefulWidget {
   final Function(Locale) onLocaleChange;
-  
+
   const MenuScreen({
     Key? key,
     required this.onLocaleChange,
@@ -18,8 +18,8 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   int _currentDotIndex = 0;
-  
-  // Add list of supported languages
+  bool _isDarkTheme = true; // Track theme state
+
   final List<({String code, String label})> _supportedLanguages = [
     (code: 'en', label: 'English'),
     (code: 'si', label: 'සිංහල'),
@@ -33,14 +33,14 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
       vsync: this,
       duration: const Duration(milliseconds: 500),
     )..addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        setState(() {
-          _currentDotIndex = (_currentDotIndex + 1) % 4;
-        });
-        _controller.reset();
-        _controller.forward();
-      }
-    });
+        if (status == AnimationStatus.completed) {
+          setState(() {
+            _currentDotIndex = (_currentDotIndex + 1) % 4;
+          });
+          _controller.reset();
+          _controller.forward();
+        }
+      });
     _controller.forward();
   }
 
@@ -50,11 +50,10 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
     super.dispose();
   }
 
-  // Add method to handle language cycling
   void _cycleLanguage(bool forward) {
     final currentLocale = Localizations.localeOf(context).languageCode;
     final currentIndex = _supportedLanguages.indexWhere((lang) => lang.code == currentLocale);
-    
+
     if (currentIndex != -1) {
       int newIndex;
       if (forward) {
@@ -66,17 +65,24 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
     }
   }
 
+  void _toggleTheme() {
+    setState(() {
+      _isDarkTheme = !_isDarkTheme;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+    final backgroundColor = _isDarkTheme ? Colors.black : Colors.white;
+    final borderColor = _isDarkTheme ? const Color(0xFF00FF00) : Colors.black;
+    final textColor = _isDarkTheme ? const Color(0xFF00FF00) : Colors.black;
+
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: backgroundColor,
       body: GestureDetector(
         onHorizontalDragEnd: (details) {
           if (details.primaryVelocity != null) {
-            // Right to left swipe (negative velocity) -> forward
-            // Left to right swipe (positive velocity) -> backward
             _cycleLanguage(details.primaryVelocity! < 0);
           }
         },
@@ -86,9 +92,9 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
               margin: const EdgeInsets.all(16),
               padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
               decoration: BoxDecoration(
-                color: Colors.black,
+                color: backgroundColor,
                 border: Border.all(
-                  color: const Color(0xFF00FF00),
+                  color: borderColor,
                   width: 2,
                 ),
                 borderRadius: BorderRadius.circular(30),
@@ -104,8 +110,8 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
                     fit: BoxFit.scaleDown,
                     child: Text(
                       l10n.gameTitle,
-                      style: const TextStyle(
-                        color: Color(0xFF00FF00),
+                      style: TextStyle(
+                        color: textColor,
                         fontSize: 36,
                         fontWeight: FontWeight.bold,
                       ),
@@ -135,8 +141,8 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
             height: 16,
             margin: const EdgeInsets.symmetric(horizontal: 2),
             decoration: BoxDecoration(
-              color: _currentDotIndex == index 
-                  ? const Color(0xFF00FF00) 
+              color: _currentDotIndex == index
+                  ? const Color(0xFF00FF00)
                   : Colors.transparent,
               border: Border.all(
                 color: const Color(0xFF00FF00),
@@ -150,12 +156,14 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildLanguageSelector() {
+    final textColor = _isDarkTheme ? const Color(0xFF00FF00) : Colors.black;
+
     return Container(
       height: 40,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: Colors.black,
         border: Border(
-          bottom: BorderSide(color: Color(0xFF00FF00), width: 1),
+          bottom: BorderSide(color: const Color(0xFF00FF00), width: 1),
         ),
       ),
       child: Row(
@@ -164,25 +172,17 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
           Expanded(
             flex: 4,
             child: Row(
-              children: [
-                _buildLanguageOption('English', 'en'),
-                _buildLanguageOption('සිංහල', 'si'),
-                _buildLanguageOption('தமிழ்', 'ta'),
-              ],
+              children: _supportedLanguages.map((lang) {
+                return _buildLanguageOption(lang.label, lang.code);
+              }).toList(),
             ),
           ),
-          const SizedBox(width: 8),
-          // Fixed-width container for the dark mode button
-          SizedBox(
-            width: 24,
-            child: Transform.rotate(
-              angle: -0.3,
-              child: Container(
-                width: 15,
-                height: 20,
-                color: Colors.yellow,
-              ),
+          IconButton(
+            icon: Icon(
+              _isDarkTheme ? Icons.dark_mode : Icons.light_mode,
+              color: textColor,
             ),
+            onPressed: _toggleTheme,
           ),
         ],
       ),
@@ -191,6 +191,7 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
 
   Widget _buildLanguageOption(String text, String code) {
     final isSelected = Localizations.localeOf(context).languageCode == code;
+
     return Expanded(
       child: GestureDetector(
         onTap: () => widget.onLocaleChange(Locale(code)),
@@ -222,10 +223,18 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
 
   Widget _buildMenuButtons(AppLocalizations l10n, BuildContext context) {
     final buttonData = [
-      ('▶', l10n.startGame, () => Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const GameScreen()))),
-      ('🏆', l10n.highScores, () => Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const HighScoresScreen(isDarkMode: true)))),
+      ('▶', l10n.playButton, () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const GameScreen(),
+            ),
+          )),
+      ('🏆', l10n.highScoresButton, () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HighScoresScreen(isDarkMode: _isDarkTheme),
+            ),
+          )),
       ('ℹ️', l10n.instructions, () => _showInstructions(context, l10n)),
     ];
 
@@ -248,66 +257,39 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
     required String text,
     required VoidCallback onPressed,
   }) {
+    final backgroundColor = _isDarkTheme ? Colors.black : Colors.white;
+    final borderColor = _isDarkTheme ? const Color(0xFF00FF00) : Colors.black;
+
     return Container(
       height: 50,
       decoration: BoxDecoration(
-        color: Colors.black,
-        border: Border.all(color: const Color(0xFF00FF00), width: 1),
+        color: backgroundColor,
+        border: Border.all(color: borderColor, width: 1),
         borderRadius: BorderRadius.circular(25),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFF00FF00),
-                borderRadius: BorderRadius.circular(24),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(24),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                icon,
+                style: const TextStyle(fontSize: 18),
               ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: onPressed,
-                  borderRadius: BorderRadius.circular(24),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        icon,
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      const SizedBox(width: 8),
-                      Flexible(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            text,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+              const SizedBox(width: 8),
+              Text(
+                text,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
+            ],
           ),
-          // Fixed-width container for the yellow accent
-          SizedBox(
-            width: 24,
-            child: Transform.rotate(
-              angle: -0.3,
-              child: Container(
-                width: 15,
-                height: 20,
-                color: Colors.yellow,
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -321,9 +303,9 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
           width: 8,
           height: 8,
           margin: const EdgeInsets.symmetric(horizontal: 4),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Color(0xFF00FF00),
+            color: const Color(0xFF00FF00),
           ),
         ),
       ),
@@ -331,28 +313,27 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
   }
 
   void _showInstructions(BuildContext context, AppLocalizations l10n) {
+    final backgroundColor = _isDarkTheme ? Colors.black : Colors.white;
+    final textColor = _isDarkTheme ? const Color(0xFF00FF00) : Colors.black;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.black,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-          side: const BorderSide(color: Color(0xFF00FF00), width: 2),
-        ),
+        backgroundColor: backgroundColor,
         title: Text(
           l10n.instructions,
-          style: const TextStyle(color: Color(0xFF00FF00)),
+          style: TextStyle(color: textColor),
         ),
         content: Text(
           l10n.instructionText,
-          style: const TextStyle(color: Color(0xFF00FF00)),
+          style: TextStyle(color: textColor),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
+            child: Text(
               'OK',
-              style: TextStyle(color: Color(0xFF00FF00)),
+              style: TextStyle(color: textColor),
             ),
           ),
         ],

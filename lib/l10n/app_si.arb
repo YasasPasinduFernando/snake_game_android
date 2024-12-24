@@ -1,7 +1,7 @@
 {
   "gameTitle": "සර්ප ක්‍රීඩාව",
-  "startGame": "ක්‍රීඩාව ආරම්භ කරන්න",
-  "highScores": "ඉහළ ලකුණු",
+  "playButton": "ක්‍රීඩාව ආරම්භ කරන්න",
+  "highScoresButton": "ඉහළ ලකුණු",
   "instructions": "උපදෙස්",
   "score": "ලකුණු: {score}",
   "@score": {
