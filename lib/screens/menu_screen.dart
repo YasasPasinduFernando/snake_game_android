@@ -74,67 +74,6 @@ class _MenuScreenState extends State<MenuScreen>
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final backgroundColor =
-        _isDarkTheme ? Colors.black : const Color.fromARGB(255, 172, 164, 54);
-    final borderColor = _isDarkTheme
-        ? const Color(0xFF00FF00)
-        : const Color.fromARGB(255, 61, 190, 10);
-    final textColor = _isDarkTheme ? const Color(0xFF00FF00) : Colors.black;
-
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      body: GestureDetector(
-        onHorizontalDragEnd: (details) {
-          if (details.primaryVelocity != null) {
-            _cycleLanguage(details.primaryVelocity! < 0);
-          }
-        },
-        child: SafeArea(
-          child: Center(
-            child: Container(
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
-              decoration: BoxDecoration(
-                color: backgroundColor,
-                border: Border.all(
-                  color: borderColor,
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildLanguageSelector(),
-                  const SizedBox(height: 60),
-                  _buildSnakeIcon(),
-                  const SizedBox(height: 20),
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      l10n.gameTitle,
-                      style: TextStyle(
-                        color: textColor,
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 60),
-                  _buildMenuButtons(l10n, context),
-                  const SizedBox(height: 40),
-                  _buildNokiaFrame(),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _buildSnakeIcon() {
     return SizedBox(
@@ -367,4 +306,87 @@ class _MenuScreenState extends State<MenuScreen>
       ),
     );
   }
+  @override
+Widget build(BuildContext context) {
+  final l10n = AppLocalizations.of(context)!;
+  final backgroundColor =
+      _isDarkTheme ? Colors.black : const Color.fromARGB(255, 172, 164, 54);
+  final borderColor = _isDarkTheme
+      ? const Color(0xFF00FF00)
+      : const Color.fromARGB(255, 61, 190, 10);
+  final textColor = _isDarkTheme ? const Color(0xFF00FF00) : Colors.black;
+
+  return Scaffold(
+    backgroundColor: backgroundColor,
+    body: GestureDetector(
+      onHorizontalDragEnd: (details) {
+        if (details.primaryVelocity != null) {
+          _cycleLanguage(details.primaryVelocity! < 0);
+        }
+      },
+      child: SafeArea(
+        child: Stack(
+          children: [
+            Center(
+              child: Container(
+                margin: const EdgeInsets.all(16),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  border: Border.all(
+                    color: borderColor,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildLanguageSelector(),
+                    const SizedBox(height: 60),
+                    _buildSnakeIcon(),
+                    const SizedBox(height: 20),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        l10n.gameTitle,
+                        style: TextStyle(
+                          color: textColor,
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 60),
+                    _buildMenuButtons(l10n, context),
+                    const SizedBox(height: 40),
+                    _buildNokiaFrame(),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 16,
+              right: 16,
+              left: 16,
+              child: Text(
+                'yasaspasindufernando@gmail.com',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: _isDarkTheme
+                      ? const Color(0xFF00FF00)
+                      : const Color.fromARGB(255, 80, 80, 80),
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
 }
