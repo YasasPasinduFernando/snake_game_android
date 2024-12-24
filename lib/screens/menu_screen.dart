@@ -15,7 +15,8 @@ class MenuScreen extends StatefulWidget {
   State<MenuScreen> createState() => _MenuScreenState();
 }
 
-class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateMixin {
+class _MenuScreenState extends State<MenuScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   int _currentDotIndex = 0;
   bool _isDarkTheme = true; // Track theme state
@@ -52,14 +53,16 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
 
   void _cycleLanguage(bool forward) {
     final currentLocale = Localizations.localeOf(context).languageCode;
-    final currentIndex = _supportedLanguages.indexWhere((lang) => lang.code == currentLocale);
+    final currentIndex =
+        _supportedLanguages.indexWhere((lang) => lang.code == currentLocale);
 
     if (currentIndex != -1) {
       int newIndex;
       if (forward) {
         newIndex = (currentIndex + 1) % _supportedLanguages.length;
       } else {
-        newIndex = (currentIndex - 1 + _supportedLanguages.length) % _supportedLanguages.length;
+        newIndex = (currentIndex - 1 + _supportedLanguages.length) %
+            _supportedLanguages.length;
       }
       widget.onLocaleChange(Locale(_supportedLanguages[newIndex].code));
     }
@@ -74,8 +77,11 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final backgroundColor = _isDarkTheme ? Colors.black : Colors.white;
-    final borderColor = _isDarkTheme ? const Color(0xFF00FF00) : Colors.black;
+    final backgroundColor =
+        _isDarkTheme ? Colors.black : const Color.fromARGB(255, 172, 164, 54);
+    final borderColor = _isDarkTheme
+        ? const Color(0xFF00FF00)
+        : const Color.fromARGB(255, 61, 190, 10);
     final textColor = _isDarkTheme ? const Color(0xFF00FF00) : Colors.black;
 
     return Scaffold(
@@ -145,7 +151,9 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
                   ? const Color(0xFF00FF00)
                   : Colors.transparent,
               border: Border.all(
-                color: const Color(0xFF00FF00),
+                color: _isDarkTheme
+                    ? const Color.fromARGB(255, 0, 255, 157)
+                    : Colors.black,
                 width: 2,
               ),
             ),
@@ -156,14 +164,21 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildLanguageSelector() {
-    final textColor = _isDarkTheme ? const Color(0xFF00FF00) : Colors.black;
+    final textColor =
+        _isDarkTheme ? const Color.fromARGB(255, 0, 255, 157) : Colors.black;
 
     return Container(
       height: 40,
       decoration: BoxDecoration(
-        color: Colors.black,
+        color: _isDarkTheme
+            ? const Color.fromARGB(255, 13, 14, 13)
+            : const Color.fromARGB(255, 172, 164, 54),
         border: Border(
-          bottom: BorderSide(color: const Color(0xFF00FF00), width: 1),
+          bottom: BorderSide(
+              color: _isDarkTheme
+                  ? const Color.fromARGB(255, 140, 19, 145)
+                  : const Color.fromARGB(255, 188, 201, 11),
+              width: 1),
         ),
       ),
       child: Row(
@@ -223,18 +238,27 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
 
   Widget _buildMenuButtons(AppLocalizations l10n, BuildContext context) {
     final buttonData = [
-      ('▶', l10n.playButton, () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const GameScreen(),
-            ),
-          )),
-      ('🏆', l10n.highScoresButton, () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HighScoresScreen(isDarkMode: _isDarkTheme),
-            ),
-          )),
+      (
+        '▶',
+        l10n.playButton,
+        () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const GameScreen(),
+              ),
+            )
+      ),
+      (
+        '🏆',
+        l10n.highScoresButton,
+        () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    HighScoresScreen(isDarkMode: _isDarkTheme),
+              ),
+            )
+      ),
       ('ℹ️', l10n.instructions, () => _showInstructions(context, l10n)),
     ];
 
@@ -257,7 +281,9 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
     required String text,
     required VoidCallback onPressed,
   }) {
-    final backgroundColor = _isDarkTheme ? Colors.black : Colors.white;
+    final backgroundColor = _isDarkTheme
+        ? const Color.fromARGB(255, 88, 68, 68)
+        : const Color.fromARGB(255, 150, 120, 120);
     final borderColor = _isDarkTheme ? const Color(0xFF00FF00) : Colors.black;
 
     return Container(
@@ -313,7 +339,8 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
   }
 
   void _showInstructions(BuildContext context, AppLocalizations l10n) {
-    final backgroundColor = _isDarkTheme ? Colors.black : Colors.white;
+    final backgroundColor =
+        _isDarkTheme ? Colors.black : const Color.fromARGB(255, 199, 194, 174);
     final textColor = _isDarkTheme ? const Color(0xFF00FF00) : Colors.black;
 
     showDialog(
