@@ -1,0 +1,31 @@
+{
+  "gameTitle": "සර්ප ක්‍රීඩාව",
+  "startGame": "ක්‍රීඩාව ආරම්භ කරන්න",
+  "highScores": "ඉහළ ලකුණු",
+  "instructions": "උපදෙස්",
+  "score": "ලකුණු: {score}",
+  "@score": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "highScore": "ඉහළම ලකුණු: {score}",
+  "@highScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "gameOver": "ක්‍රීඩාව අවසානයි",
+  "playAgain": "නැවත ක්‍රීඩා කරන්න",
+  "instructionText": "සර්පයා පාලනය කිරීමට ස්වයිප් කරන්න. ලකුණු ලබා ගැනීමට ආහාර කන්න. ඔබව වැදීමෙන් වළකින්න!",
+  "noScoresYet": "තවම ලකුණු නැත!",
+  "darkMode": "අඳුරු ප්‍රකාරය",
+  "lightMode": "ආලෝක ප්‍රකාරය",
+  "pause": "විරාමය",
+  "resume": "යළි ආරම්භ කරන්න",
+  "restart": "යළි පටන් ගන්න"
+}

@@ -1,18 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/menu_screen.dart';
 import 'services/database_helper.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'l10n/app_localizations.dart';  // Replace localization_service.dart with this
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await DatabaseHelper.instance.database;
-  runApp(MyApp());
+  
+  final prefs = await SharedPreferences.getInstance();
+  final String languageCode = prefs.getString('languageCode') ?? 'en';
+  
+  runApp(MyApp(initialLocale: Locale(languageCode)));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  final Locale initialLocale;
+  
+  const MyApp({super.key, required this.initialLocale});
+  
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late Locale _currentLocale;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentLocale = widget.initialLocale;
+  }
+
+  void updateLocale(Locale newLocale) {
+    setState(() => _currentLocale = newLocale);
+    SharedPreferences.getInstance().then(
+      (prefs) => prefs.setString('languageCode', newLocale.languageCode)
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -21,16 +49,14 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.green,
         brightness: Brightness.dark,
       ),
-      home: MenuScreen(),
-      localizationsDelegates: [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
+      home: MenuScreen(onLocaleChange: updateLocale),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: const [
+        Locale('en'),
+        Locale('si'),
+        Locale('ta'),
       ],
-      supportedLocales: [
-        const Locale('en', ''),
-        const Locale('es', ''),
-      ],
+      locale: _currentLocale,
     );
   }
 }
