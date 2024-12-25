@@ -8,11 +8,86 @@ import '../widgets/game_grid.dart';
 import '../services/database_helper.dart';
 import '../models/score.dart';
 
+enum Difficulty { easy, medium, hard }
+
 class GameScreen extends StatefulWidget {
   const GameScreen({Key? key}) : super(key: key);
 
   @override
   _GameScreenState createState() => _GameScreenState();
+}
+
+class GameControls extends StatelessWidget {
+  final bool isPaused;
+  final bool isDarkMode;
+  final VoidCallback onPausePressed;
+  final VoidCallback onThemeToggle;
+  final VoidCallback onRestart;
+  final VoidCallback onDifficultyChange;
+  final Difficulty currentDifficulty;
+
+  const GameControls({
+    Key? key,
+    required this.isPaused,
+    required this.isDarkMode,
+    required this.onPausePressed,
+    required this.onThemeToggle,
+    required this.onRestart,
+    required this.onDifficultyChange,
+    required this.currentDifficulty,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          IconButton(
+            icon: Icon(
+              isPaused ? Icons.play_arrow : Icons.pause,
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
+            onPressed: onPausePressed,
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.speed,
+              color: _getDifficultyColor(),
+            ),
+            onPressed: onDifficultyChange,
+            tooltip: 'Current: ${currentDifficulty.toString().split('.').last}',
+          ),
+          IconButton(
+            icon: Icon(
+              isDarkMode ? Icons.light_mode : Icons.dark_mode,
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
+            onPressed: onThemeToggle,
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.refresh,
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
+            onPressed: onRestart,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getDifficultyColor() {
+    switch (currentDifficulty) {
+      case Difficulty.easy:
+        return Colors.green;
+      case Difficulty.medium:
+        return Colors.orange;
+      case Difficulty.hard:
+        return Colors.red;
+    }
+  }
 }
 
 class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
@@ -30,9 +105,17 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   int foodEaten = 0;
   Timer? timer;
   final AudioPlayer player = AudioPlayer();
+  Difficulty difficulty = Difficulty.easy;  // Default to easy
   
   late AnimationController _foodAnimationController;
   late Animation<double> _foodAnimation;
+
+  // Base speed is 300ms for easy, doubles for each difficulty level
+  final Map<Difficulty, int> speedSettings = {
+    Difficulty.easy: 300,    // Base speed: 300ms
+    Difficulty.medium: 150,  // Double speed: 150ms
+    Difficulty.hard: 75,     // Quadruple speed: 75ms
+  };
 
   @override
   void initState() {
@@ -96,7 +179,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
   void _startTimer() {
     timer?.cancel();
-    final duration = max(80, 250 - (score * 8));
+    // Get base speed from difficulty setting
+    final baseSpeed = speedSettings[difficulty]!;
+    // Increase speed with score, but maintain the relative difficulty differences
+    final speedIncrease = (score * 2); // Small increase per score
+    final duration = max(30, baseSpeed - speedIncrease); // Minimum 30ms to keep game playable
+    
     timer = Timer.periodic(
       Duration(milliseconds: duration),
       (Timer t) {
@@ -104,6 +192,80 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           _moveSnake();
         }
       },
+    );
+  }
+
+  void _changeDifficulty(Difficulty newDifficulty) {
+    setState(() {
+      difficulty = newDifficulty;
+      if (!isPaused) {
+        _startTimer();  // Restart timer with new speed
+      }
+    });
+  }
+
+  void _showDifficultyDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Select Difficulty'),
+        backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
+        titleTextStyle: TextStyle(
+          color: isDarkMode ? Colors.white : Colors.black,
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(
+                'EASY (${speedSettings[Difficulty.easy]}ms)',
+                style: TextStyle(
+                  color: isDarkMode ? Colors.white : Colors.black,
+                ),
+              ),
+              selected: difficulty == Difficulty.easy,
+              leading: const Icon(Icons.speed, color: Colors.green),
+              onTap: () {
+                _changeDifficulty(Difficulty.easy);
+                Navigator.pop(context);
+                _startGame();
+              },
+            ),
+            ListTile(
+              title: Text(
+                'MEDIUM (${speedSettings[Difficulty.medium]}ms)',
+                style: TextStyle(
+                  color: isDarkMode ? Colors.white : Colors.black,
+                ),
+              ),
+              selected: difficulty == Difficulty.medium,
+              leading: const Icon(Icons.speed, color: Colors.orange),
+              onTap: () {
+                _changeDifficulty(Difficulty.medium);
+                Navigator.pop(context);
+                _startGame();
+              },
+            ),
+            ListTile(
+              title: Text(
+                'HARD (${speedSettings[Difficulty.hard]}ms)',
+                style: TextStyle(
+                  color: isDarkMode ? Colors.white : Colors.black,
+                ),
+              ),
+              selected: difficulty == Difficulty.hard,
+              leading: const Icon(Icons.speed, color: Colors.red),
+              onTap: () {
+                _changeDifficulty(Difficulty.hard);
+                Navigator.pop(context);
+                _startGame();
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -164,7 +326,6 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           break;
       }
 
-      // Wrap around screen edges
       newHead = Offset(
         newHead.dx < 0 ? columns - 1 : (newHead.dx >= columns ? 0 : newHead.dx),
         newHead.dy < 0 ? rows - 1 : (newHead.dy >= rows ? 0 : newHead.dy),
@@ -180,11 +341,13 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         score++;
         player.play(AssetSource('audio/eat.mp3'));
         _spawnFood();
+        _startTimer(); // Update speed when score changes
       } else if (bigFood != null && newHead == bigFood) {
         snake.add(newHead);
         score += 5;
         player.play(AssetSource('audio/eat.mp3'));
         setState(() => bigFood = null);
+        _startTimer(); // Update speed when score changes
       } else {
         snake.add(newHead);
         snake.removeAt(0);
@@ -211,7 +374,15 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: const Text('Game Over'),
-        content: Text('Score: $score\nHigh Score: $highScore'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Score: $score'),
+            Text('High Score: $highScore'),
+            Text('Difficulty: ${difficulty.toString().split('.').last}'),
+          ],
+        ),
         backgroundColor: isDarkMode ? Colors.grey[900] : Colors.white,
         titleTextStyle: TextStyle(
           color: isDarkMode ? Colors.white : Colors.black,
@@ -223,6 +394,19 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           fontSize: 18,
         ),
         actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              _showDifficultyDialog();
+            },
+            child: const Text(
+              'Change Difficulty',
+              style: TextStyle(
+                color: Colors.blue,
+                fontSize: 18,
+              ),
+            ),
+          ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
@@ -286,6 +470,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             GameControls(
               isPaused: isPaused,
               isDarkMode: isDarkMode,
+              currentDifficulty: difficulty,
               onPausePressed: () {
                 setState(() {
                   isPaused = !isPaused;
@@ -302,6 +487,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 });
               },
               onRestart: _startGame,
+              onDifficultyChange: _showDifficultyDialog,
             ),
           ],
         ),
