@@ -1,0 +1,32 @@
+{
+  "gameTitle": "Snake Game",
+  "startGame": "Start Game",
+  "playButton": "Play",
+  "highScoresButton": "High Scores",
+  "instructions": "Instructions",
+  "score": "Score: {score}",
+  "@score": {
+      "placeholders": {
+          "score": {
+              "type": "int"
+          }
+      }
+  },
+  "highScore": "High Score: {score}",
+  "@highScore": {
+      "placeholders": {
+          "score": {
+              "type": "int"
+          }
+      }
+  },
+  "gameOver": "Game Over",
+  "playAgain": "Play Again",
+  "instructionText": "Swipe to control the snake. Eat food to score points. Avoid hitting yourself!",
+  "noScoresYet": "No scores yet!",
+  "darkMode": "Dark Mode",
+  "lightMode": "Light Mode",
+  "pause": "Pause",
+  "resume": "Resume",
+  "restart": "Restart"
+}

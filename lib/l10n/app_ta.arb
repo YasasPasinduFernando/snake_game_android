@@ -1,0 +1,45 @@
+{
+  "gameTitle": "பாம்பு விளையாட்டு",
+  "startGame": "விளையாட்டைத் தொடங்கு",
+  "playButton": "விளையாடு",
+  "highScoresButton": "உயர் மதிப்பெண்கள்",
+  "instructions": "வழிமுறைகள்",
+  "score": "மதிப்பெண்: {score}",
+  "@score": {
+      "placeholders": {
+          "score": {
+              "type": "int"
+          }
+      }
+  },
+  "highScore": "அதிக மதிப்பெண்: {score}",
+  "@highScore": {
+      "placeholders": {
+          "score": {
+              "type": "int"
+          }
+      }
+  },
+  "gameOver": "விளையாட்டு முடிந்தது",
+  "playAgain": "மீண்டும் விளையாடு",
+  "instructionText": "பாம்பைக் கட்டுப்படுத்த ஸ்வைப் செய்யவும். மதிப்பெண்களைப் பெற உணவை சாப்பிடவும். உங்களை மோதுவதைத் தவிர்க்கவும்!",
+  "noScoresYet": "இன்னும் மதிப்பெண்கள் இல்லை!",
+  "darkMode": "இருள் பயன்முறை",
+  "lightMode": "ஒளி பயன்முறை",
+  "pause": "இடைநிறுத்து",
+  "resume": "தொடரவும்",
+  "restart": "மீண்டும் தொடங்கு",
+  "easy": "எளிது",
+  "medium": "நடுத்தரம்",
+  "hard": "கடினம்",
+  "selectDifficulty": "கடினத்தன்மையைத் தேர்ந்தெடுக்கவும்",
+  "changeDifficulty": "கடினத்தன்மையை மாற்றவும்",
+  "currentDifficulty": "தற்போதைய கடினத்தன்மை: {difficulty}",
+  "@currentDifficulty": {
+    "placeholders": {
+      "difficulty": {
+        "type": "String"
+      }
+    }
+  }
+}
